@@ -1,0 +1,19 @@
+FROM arm32v7/debian
+
+WORKDIR /tmp
+
+RUN dpkg --add-architecture amd64 \
+ && apt-get update -q && apt-get install -y -q \
+    build-essential \
+    devscripts \
+    equivs \
+    fakeroot \
+    git \
+    libdistro-info-perl \
+    libparse-debcontrol-perl \
+ && apt-get download qemu-user-static:amd64 \
+ && dpkg-deb --fsys-tarfile qemu-user-static*.deb | tar -x ./usr/bin/qemu-arm-static \
+ && mv usr/bin/qemu-arm-static /usr/bin/ \
+ && rm -rf /var/lib/apt/lists/* /tmp/*
+
+WORKDIR workdir
